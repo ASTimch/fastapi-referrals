@@ -5,7 +5,6 @@ from sqlalchemy.engine import Result
 
 from app.database import async_session_maker
 from app.models.base import pk_type
-from app.models.user import User
 
 T = TypeVar("T")
 

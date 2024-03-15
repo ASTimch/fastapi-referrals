@@ -1,4 +1,4 @@
-from typing import Annotated, AsyncGenerator
+from typing import AsyncGenerator
 
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
@@ -19,8 +19,6 @@ else:
 engine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-# idpk = Annotated[int, "Идентификатор объекта"]
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:

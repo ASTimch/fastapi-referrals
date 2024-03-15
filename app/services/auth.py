@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
-from typing import Annotated, List, Optional
+from typing import Annotated, Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -15,12 +15,7 @@ from app.config import settings
 from app.crud.user_dao import UserDAO
 from app.logger import logger
 from app.models.user import User
-from app.schemas.auth import (
-    ReferralsListDTO,
-    UserAuthDTO,
-    UserCreateDTO,
-    UserReadDTO,
-)
+from app.schemas.auth import ReferralsListDTO, UserCreateDTO, UserReadDTO
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

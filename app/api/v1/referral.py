@@ -1,5 +1,4 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, status
-from fastapi_cache.decorator import cache
 
 from app.models.user import User
 from app.schemas.auth import UserEmail
@@ -9,11 +8,6 @@ from app.services.email import send_referral_code_email
 from app.services.referral_code import ReferralCodeService
 
 referral_router = APIRouter()
-
-
-@referral_router.get("/", summary="Приветствие")
-async def get_agree():
-    return {"message": "Hello I'm here!"}
 
 
 @referral_router.post("/referral_code", summary="Создать реферальный код")

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sqlalchemy import Result, select
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import joinedload
 
 from app.crud.base_dao import BaseDAO
 from app.database import async_session_maker

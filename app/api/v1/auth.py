@@ -10,7 +10,7 @@ from app.common.exceptions import (
 from app.config import settings
 from app.logger import logger
 from app.models.user import User
-from app.schemas.auth import Token, UserAuthDTO, UserCreateDTO, UserReadDTO
+from app.schemas.auth import Token, UserCreateDTO, UserReadDTO
 from app.schemas.referral_code import ReferralCodeQuery
 from app.services.auth import AuthService, current_user
 from app.services.referral_code import ReferralCodeService
