@@ -7,7 +7,6 @@ from app.common.exceptions import (
     AuthorizationErrorException,
     ReferralCodeNotFoundException,
 )
-from app.config import settings
 from app.logger import logger
 from app.models.user import User
 from app.schemas.auth import Token, UserCreateDTO, UserReadDTO

@@ -99,8 +99,6 @@ async def user_ac() -> AsyncIterator[AsyncClient]:
             },
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        # jwt = ac.cookies.get(AUTH_COOKIE)
-        # assert jwt, "Куки авторизованного клиента не найдены"
-        # ac.headers["Cookie"] = f"{AUTH_COOKIE}={jwt}"
-        print(res)
+        token = res.json().get("access_token")
+        ac.headers.update({"Authorization": f"Bearer {token}"})
         yield ac
