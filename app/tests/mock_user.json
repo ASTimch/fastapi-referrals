@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "referrer_id": null,
+        "email": "user1@example.com",
+        "hashed_password": "$2b$12$CbOaCssdebdBoRMiWXmziOaUiXtuSkPSjxJ/fZGopHCjyilKhbv46"
+    },
+    {
+        "id": 2,
+        "referrer_id": 1,
+        "email": "user2@example.com",
+        "hashed_password": "$2b$12$lPk3jKHLtqBPEiMa9r8QC.7z6PGMA1T2ygCDBAulUH1pCM0VVj.92"
+    },
+    {
+        "id": 3,
+        "referrer_id": 1,
+        "email": "user3@example.com",
+        "hashed_password": "$2b$12$UsMaMlBNbUCJyVJwasD6i.DPBcaHVptA7dj6qI1.mX6wAw2lh1mYW"
+    }
+]
