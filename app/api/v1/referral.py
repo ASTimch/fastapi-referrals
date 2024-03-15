@@ -1,15 +1,12 @@
-from typing import Optional
+from fastapi import APIRouter, BackgroundTasks, Depends, status
+from fastapi_cache.decorator import cache
 
-from fastapi import APIRouter, Depends, status
-
-# from app.auth import current_superuser
-# from app.database import idpk
-# from app.models.user import User
-# from app.schemas.template import (
-#     TemplateFieldTypeReadDTO,
-#     TemplateFieldTypeWriteDTO,
-# )
-# from app.services.template import TemplateFieldTypeService
+from app.models.user import User
+from app.schemas.auth import UserEmail
+from app.schemas.referral_code import ReferralCodeWriteDTO
+from app.services.auth import AuthService, current_user
+from app.services.email import send_referral_code_email
+from app.services.referral_code import ReferralCodeService
 
 referral_router = APIRouter()
 
@@ -19,49 +16,72 @@ async def get_agree():
     return {"message": "Hello I'm here!"}
 
 
-# @router.get("/{id}", summary="Получить тип поля с заданным id")
-# async def get_template_field_type_by_id(
-#     id: idpk,
-# ) -> Optional[TemplateFieldTypeReadDTO]:
-#     return await TemplateFieldTypeService.get(id=id)
+@referral_router.post("/referral_code", summary="Создать реферальный код")
+async def renew_referral_code(
+    code: ReferralCodeWriteDTO,
+    user: User = Depends(current_user),
+):
+    return await ReferralCodeService.renew_user_code(
+        user=user,
+        life_time=code.code_lifetime,
+    )
 
 
-# @router.put("/{id}", summary="Обновить тип с заданным id")
-# async def update_template_field_type(
-#     id: idpk,
-#     data: TemplateFieldTypeWriteDTO,
-#     user: User = Depends(current_superuser),
-# ) -> Optional[TemplateFieldTypeReadDTO]:
-#     return await TemplateFieldTypeService.update(id, data)
+@referral_router.get(
+    "/referral_code", summary="Прочитать реферальный код текущего пользователя"
+)
+async def get_referral_code(user: User = Depends(current_user)):
+    return await ReferralCodeService.get_by_user_id(user_id=user.id)
 
 
-# @router.post(
-#     "/",
-#     status_code=status.HTTP_201_CREATED,
-#     summary="Добавить тип для полей шаблона",
-# )
-# async def add_template_field_type(
-#     data: TemplateFieldTypeWriteDTO, user: User = Depends(current_superuser)
-# ) -> Optional[TemplateFieldTypeReadDTO]:
-#     return await TemplateFieldTypeService.add(data)
+@referral_router.get(
+    "/referral_code/{email}",
+    summary="Получить реферальный код для заданного email",
+)
+async def get_referral_code_for_email(email: UserEmail):
+    return await ReferralCodeService.get_by_user_email(email)
 
 
-# @router.post(
-#     "/list",
-#     status_code=status.HTTP_201_CREATED,
-#     summary="Добавить список типов для полей шаблона",
-# )
-# async def add_template_field_type_list(
-#     data: list[TemplateFieldTypeWriteDTO],
-#     user: User = Depends(current_superuser),
-# ) -> Optional[list[TemplateFieldTypeReadDTO]]:
-#     return await TemplateFieldTypeService.add_list(data)
+@referral_router.get(
+    "/referrals/{referrer_id}",
+    summary="Получить список всех рефералов по referrer_id",
+)
+async def get_referrals_by_referrer(referrer_id: int):
+    return await AuthService.get_users_by_referrer_id(referrer_id)
 
 
-# @router.delete(
-#     "/{id}",
-#     status_code=status.HTTP_204_NO_CONTENT,
-#     summary="Удалить тип",
-# )
-# async def delete_template(id: idpk, user: User = Depends(current_superuser)):
-#     await TemplateFieldTypeService.delete(id)
+@referral_router.get(
+    "/email_referral_code",
+    summary="Отправить реферальный код пользователя на почту",
+)
+async def email_referral_code(
+    bg_tasks: BackgroundTasks, user: User = Depends(current_user)
+):
+    code_dto = await ReferralCodeService.get_by_user_id(user_id=user.id)
+    bg_tasks.add_task(send_referral_code_email, user.email, code_dto.code)
+
+
+@referral_router.get(
+    "/validate_referral_code", summary="Валидировать реферальный код"
+)
+async def validate_referral_code(referral_code: str):
+    return await ReferralCodeService.get_referrer_user_id(referral_code)
+
+
+@referral_router.get(
+    "/email_referral_code",
+    summary="Отправить реферальный код на почту",
+)
+async def get_referral_code_by_email(
+    user: User = Depends(current_user),
+):
+    return {"message": "Код будет отправлен на почту"}
+
+
+@referral_router.delete(
+    "/referral_code",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Удалить реферальный код",
+)
+async def delete_referral_code(user: User = Depends(current_user)):
+    await ReferralCodeService.delete_by_user_id(user.id)

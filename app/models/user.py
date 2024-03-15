@@ -1,24 +1,25 @@
-from typing import TYPE_CHECKING, Optional
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import ForeignKey, String
+from typing import Optional
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, pk_type
 
-if TYPE_CHECKING:
-    from app.models.referral_code import ReferralCode
+from app.models.referral_code import ReferralCode
 
 
-class User(SQLAlchemyBaseUserTable[int], Base):
+class User(Base):
     __tablename__ = "user"
+    id: Mapped[pk_type] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
     email: Mapped[str] = mapped_column(
         String(length=320), unique=True, index=True, nullable=False
     )
     hashed_password: Mapped[str] = mapped_column(
         String(length=1024), nullable=False
     )
-    name: Mapped[str] = mapped_column(String(length=255), nullable=False)
-    # referrers
     referral_code: Mapped[Optional["ReferralCode"]] = relationship(
         "ReferralCode", back_populates="user", uselist=False
     )

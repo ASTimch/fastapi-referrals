@@ -23,13 +23,15 @@ class Settings(BaseSettings):
     # Auth
     SECRET_KEY: str
     ALGORITHM: str
-    JWT_LIFETIME: int = 3600
-    COOKIE_LIFETIME: int = 3600
-    RESET_PASSWORD_SECRET: str
+    JWT_LIFETIME_SECONDS: int = 3600
+    # COOKIE_LIFETIME: int = 3600
+    # COOKIE_NAME: str = "referral_access_token"
+    # RESET_PASSWORD_SECRET: str
+    CACHE_EXPIRE: int = 0
 
     # Redis
-    # REDIS_HOST: str
-    # REDIS_PORT: int
+    REDIS_HOST: str
+    REDIS_PORT: str
 
     # email smtp host
     SMTP_HOST: str
@@ -56,6 +58,10 @@ class Settings(BaseSettings):
             self.TEST_DB_PORT,
             self.TEST_DB_NAME,
         )
+
+    @property
+    def redis_url(self):
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
 
     # Настройки приложения
     API_V1_PREFIX: str = "/api/v1"

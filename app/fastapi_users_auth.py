@@ -47,6 +47,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         self, user: User, request: Optional[Request] = None
     ):
         print(f"User {user.id} has registered.")
+        body_json = await request.json()
 
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
