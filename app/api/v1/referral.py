@@ -1,8 +1,8 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, status
 
 from app.models.user import User
-from app.schemas.auth import UserEmail
-from app.schemas.referral_code import ReferralCodeWriteDTO
+from app.schemas.auth import ReferralsListDTO, UserEmail
+from app.schemas.referral_code import ReferralCodeReadDTO, ReferralCodeWriteDTO
 from app.services.auth import AuthService, current_user
 from app.services.email import send_referral_code_email
 from app.services.referral_code import ReferralCodeService
@@ -24,7 +24,9 @@ async def renew_referral_code(
 @referral_router.get(
     "/referral_code", summary="Прочитать реферальный код текущего пользователя"
 )
-async def get_referral_code(user: User = Depends(current_user)):
+async def get_referral_code(
+    user: User = Depends(current_user),
+) -> ReferralCodeReadDTO:
     return await ReferralCodeService.get_by_user_id(user_id=user.id)
 
 
@@ -32,7 +34,7 @@ async def get_referral_code(user: User = Depends(current_user)):
     "/referral_code/{email}",
     summary="Получить реферальный код для заданного email",
 )
-async def get_referral_code_for_email(email: UserEmail):
+async def get_referral_code_for_email(email: UserEmail) -> ReferralCodeReadDTO:
     return await ReferralCodeService.get_by_user_email(email)
 
 
@@ -40,7 +42,7 @@ async def get_referral_code_for_email(email: UserEmail):
     "/referrals/{referrer_id}",
     summary="Получить список всех рефералов по referrer_id",
 )
-async def get_referrals_by_referrer(referrer_id: int):
+async def get_referrals_by_referrer(referrer_id: int) -> ReferralsListDTO:
     return await AuthService.get_users_by_referrer_id(referrer_id)
 
 
@@ -58,7 +60,7 @@ async def email_referral_code(
 @referral_router.get(
     "/validate_referral_code", summary="Валидировать реферальный код"
 )
-async def validate_referral_code(referral_code: str):
+async def validate_referral_code(referral_code: str) -> int:
     return await ReferralCodeService.get_referrer_user_id(referral_code)
 
 
