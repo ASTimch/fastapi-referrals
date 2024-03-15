@@ -42,13 +42,13 @@ class ReferralCodeService:
         """Возвращает реферальный код с заданным идентификатором.
 
         Args:
-            id (pk_type): идентификатор объекта в БД.
+            id: Идентификатор объекта в БД.
 
         Returns:
-            ReferralCodeReadDTO: реферальный код с заданным id.
+            Реферальный код с заданным id.
 
         Raises:
-            ReferralCodeNotFoundException: если код заданным id не найден.
+            ReferralCodeNotFoundException: Если код заданным id не найден.
         """
 
         obj = await ReferralCodeDAO.get_by_id(id)
@@ -65,10 +65,10 @@ class ReferralCodeService:
             user_id: Идентификатор пользователя в БД.
 
         Returns:
-            ReferralCodeReadDTO: реферальный код пользователя.
+            ReferralCodeReadDTO: Реферальный код пользователя.
 
         Raises:
-            ReferralCodeNotFoundException: если код для пользователя не найден.
+            ReferralCodeNotFoundException: Если код для пользователя не найден.
         """
 
         referral_code = await ReferralCodeDAO.get_by_user_id(user_id)

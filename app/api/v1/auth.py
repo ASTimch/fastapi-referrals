@@ -18,7 +18,11 @@ from app.services.referral_code import ReferralCodeService
 router = APIRouter()
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    description="Регистрация нового пользователя",
+    status_code=status.HTTP_201_CREATED,
+)
 async def register_user(
     user_data: UserCreateDTO, referral_code: ReferralCodeQuery = None
 ):
@@ -33,18 +37,12 @@ async def register_user(
     await AuthService.register(user_data, referrer_id)
 
 
-@router.post("/logout", status_code=200)
-async def logout_user(response: Response):
-    response.delete_cookie(settings.COOKIE_NAME)
-    return {"result": "logout completed"}
-
-
-@router.get("/me")
+@router.get("/me", description="Информация о текущем пользователе")
 async def get_user_me(user: User = Depends(current_user)) -> UserReadDTO:
     return AuthService.user_info(user)
 
 
-@router.post("/login")
+@router.post("/login", description="Авторизация в учетной записи")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
