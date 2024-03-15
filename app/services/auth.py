@@ -46,6 +46,8 @@ class AuthService:
         Args:
             user_data: Учетные данные пользователя.
             referrer_id: Уникальный идентификатор реферера.
+        Raises:
+            UserAlreadyExistsException: При регистрации на имеющийся email.
         """
         existing_user = await UserDAO.get_one_or_none(email=user_data.email)
         if existing_user:
