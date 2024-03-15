@@ -1,0 +1,49 @@
+name: referral
+version: '3.7'
+
+volumes:
+  referral_postgresdata:
+
+services:
+  db:
+    image: postgres:15
+    container_name: referral_db
+    volumes:
+      - referral_postgresdata:/var/lib/postgresql/data
+    env_file: .env-prod
+    ports:
+      - 5432:5432
+    restart: always
+    healthcheck:  
+      test: ["CMD-SHELL", "-c", "pg_isready -q -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: referral_redis
+
+  referral:
+    image: referral_image
+    build: 
+      context: .
+    env_file: .env-prod
+    container_name: referral_app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: ["/referral/startup_scripts/app.sh"]
+    
+  gateway:
+    build: ./gateway/
+    container_name: referral_gateway
+    env_file: .env-prod
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - referral
+
