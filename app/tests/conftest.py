@@ -15,9 +15,6 @@ from app.models.base import Base
 from app.models.referral_code import ReferralCode
 from app.models.user import User
 
-# from fastapi.testclient import TestClient
-# from httpx import AsyncClient
-
 
 @pytest_asyncio.fixture(autouse=True, scope="session")
 async def prepare_database():
@@ -50,19 +47,10 @@ async def prepare_database():
                 )
         await session.commit()
 
-    # yield
-    # удаление всех таблиц после тестов в БД
-    # async with engine.begin() as conn:
-    #     await conn.run_sync(Base.metadata.drop_all)
+    yield
 
-
-# SETUP
-# @pytest.fixture(scope="session")
-# def event_loop(request):
-#     """Create an instance of the default event loop for each test case."""
-#     loop = asyncio.get_event_loop_policy().new_event_loop()
-#     yield loop
-#     loop.close()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest.fixture

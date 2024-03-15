@@ -8,7 +8,7 @@ v1 = APIRouter(prefix=settings.API_V1_PREFIX)
 
 v1.include_router(
     referral_router,
-    prefix="/referral",
+    prefix="",
     tags=["User referral"],
 )
 
