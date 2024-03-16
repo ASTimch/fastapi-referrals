@@ -15,6 +15,7 @@
 - **SQLAlchemy - 2.0**
 - **Pydantic - 2.5**
 - **PostgreSQL**
+- **pytest**
 - **Redis**
 - **Docker**
 - **nginx**
@@ -150,4 +151,9 @@ GET запрос по адресу /api/v1/email_referral_code/
 ```
     localhost:8000/api/v1/docs
     localhost:8000/api/v1/redoc
+```
+
+### Запуск тестов:
+```
+    pytest . --log-disable=referrals
 ```

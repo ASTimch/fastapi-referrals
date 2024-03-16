@@ -3,7 +3,7 @@ import sys
 
 from app.config import settings
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("referrals")
 stream_handler = logging.StreamHandler(stream=sys.stdout)
 log_formatter = logging.Formatter(
     "%(asctime)s: %(name)s [%(levelname)s] %(message)s"
