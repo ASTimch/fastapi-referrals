@@ -1,7 +1,7 @@
 """initial
 
 Revision ID: 001
-Revises: 
+Revises:
 Create Date: 2024-03-15 17:52:16.716409
 
 """
