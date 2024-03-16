@@ -6,6 +6,7 @@ pyproject.toml
 
 .env-docker
 .env-prod
+referrals.log
 
 # working file
 test_requests.txt

@@ -3,7 +3,9 @@ from email.message import EmailMessage
 
 from pydantic import EmailStr
 
+from app.common.constants import LogMessages
 from app.config import settings
+from app.logger import logger
 
 
 def create_referral_code_template(
@@ -31,3 +33,4 @@ def send_referral_code_email(email_to: EmailStr, referral_code: str):
     with smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT) as server:
         server.login(settings.SMTP_USER, settings.SMTP_PASS)
         server.send_message(msg_content)
+        logger.info(LogMessages.REFCODE_EMAILED.format(email_to))

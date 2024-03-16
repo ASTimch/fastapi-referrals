@@ -4,7 +4,7 @@ from fastapi_cache.decorator import cache
 from jose import jwt
 from pydantic import EmailStr
 
-from app.common.constants import Messages
+from app.common.constants import LogMessages, Messages
 from app.common.exceptions import (
     ReferralCodeExpiredException,
     ReferralCodeNotFoundException,
@@ -12,6 +12,7 @@ from app.common.exceptions import (
 from app.config import settings
 from app.crud.referral_code_dao import ReferralCodeDAO
 from app.crud.user_dao import UserDAO
+from app.logger import logger
 from app.models.base import pk_type
 from app.models.user import User
 from app.schemas.referral_code import ReferralCodeReadDTO
@@ -120,11 +121,13 @@ class ReferralCodeService:
                 old_code.id,
                 code=new_code,
             )
+            logger.info(LogMessages.REFCODE_UPDATED.format(user.id))
         else:
             new_code = await ReferralCodeDAO.create(
                 user_id=user.id,
                 code=new_code,
             )
+            logger.info(LogMessages.REFCODE_CREATED.format(user.id))
         return ReferralCodeReadDTO.model_validate(new_code)
 
     @classmethod
@@ -144,6 +147,7 @@ class ReferralCodeService:
                 detail=Messages.REFERRAL_CODE_FOR_USER_NOT_FOUND
             )
         await ReferralCodeDAO.delete_(id)
+        logger.info(LogMessages.REFCODE_DELETED.format(id))
 
     @classmethod
     async def delete_by_user_id(cls, user_id: pk_type):
@@ -162,6 +166,9 @@ class ReferralCodeService:
                 detail=Messages.REFERRAL_CODE_FOR_USER_NOT_FOUND
             )
         await ReferralCodeDAO.delete_(referral_code.id)
+        logger.info(
+            LogMessages.USER_REFCODE_DELETED.format(referral_code.id, user_id)
+        )
 
     @classmethod
     async def get_referrer_user_id(cls, referral_code: str) -> pk_type:

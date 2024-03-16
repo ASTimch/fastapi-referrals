@@ -7,6 +7,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import EmailStr
 
+from app.common.constants import LogMessages
 from app.common.exceptions import (
     AuthorizationErrorException,
     UserAlreadyExistsException,
@@ -51,6 +52,7 @@ class AuthService:
         """
         existing_user = await UserDAO.get_one_or_none(email=user_data.email)
         if existing_user:
+            logger.info(LogMessages.RE_REGISRATION.format(user_data.email))
             raise UserAlreadyExistsException()
         hashed_password = get_password_hash(
             user_data.password.get_secret_value()
@@ -60,6 +62,7 @@ class AuthService:
             hashed_password=hashed_password,
             referrer_id=referrer_id,
         )
+        logger.info(LogMessages.NEW_REGISTRATION.format(user_data.email))
 
     @classmethod
     async def authenticate_user(
@@ -67,7 +70,9 @@ class AuthService:
     ) -> Optional[User]:
         user = await UserDAO.get_one_or_none(email=email)
         if user and verify_password(password, user.hashed_password):
+            logger.info(LogMessages.AUTHENTICATED.format(email))
             return user
+        logger.info(LogMessages.AUTHENTICATION_FAILED.format(email))
         return None
 
     @classmethod
